@@ -21,10 +21,16 @@ Install:
   ```
    docker network create --driver=bridge --ipv6 --subnet=fdcb:9c90:23:11::/64 --gateway=fdcb:9c90:23:11::1 --subnet=172.23.11.0/24 --gateway=172.23.11.1 -o "com.docker.network.bridge.name"="br-getmail" network-getmail
   ```
-- Config file must be customized
+- Generate the config from Mailcow's sync jobs. Every **inactive** sync job (Mailcow: E-Mail -> Configuration -> Sync jobs) becomes a getmail job, so Mailcow's own imapsync leaves it alone. The script reads the DB credentials from /opt/mailcow-dockerized/mailcow.conf and writes conf/settings.ini (it contains the IMAP passwords and is not tracked). To write the config by hand instead, start from conf/settings.ini.example.
   ```
-   cp /opt/getmail/settings.ini.example  /opt/getmail/settings.ini
-   vi /opt/getmail/settings.ini
+   cd /opt/getmail
+   ./generate_config.sh
+  ```
+- Optional: keep the config in sync. watch_changes.sh follows MariaDB's binlog, reruns generate_config.sh whenever a row of the imapsync table is updated (it does not react to INSERT/DELETE, so run generate_config.sh by hand after adding or removing a job) and restarts getmail (with a notification mail) when the config changed.
+  ```
+   cp /opt/getmail/getmail-changes-watcher.service /etc/systemd/system/
+   systemctl daemon-reload
+   systemctl enable --now getmail-changes-watcher.service
   ```
 - Start mailcow and getmail.
   ```
@@ -42,7 +48,7 @@ Install:
    
 # Config
 
-Getmail is configured with the configuration file .getmail/settings.ini. Everything under [DEFAULT] applies to all IMAP accounts. Mostly only imap_hostname:, imap_username:, imap_password: have to be customized. In the source IMAP account only one folder is monitored (default = imap_sync_folder: INBOX), if the junk folder should also be monitored, two accounts must be created. 
+Getmail is configured with the configuration file conf/settings.ini. Everything under [DEFAULT] applies to all IMAP accounts. Mostly only imap_hostname:, imap_username:, imap_password: have to be customized. In the source IMAP account only one folder is monitored (default = imap_sync_folder: INBOX), if the junk folder should also be monitored, two accounts must be created. 
 
  ```
 [INBOX_test_gmx.de]
