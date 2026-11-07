@@ -1,4 +1,3 @@
-version: '2.4'
 services:
 
     getmail:
@@ -8,7 +7,7 @@ services:
         context: .
         dockerfile: Dockerfiles/Dockerfile
       environment:
-        - TZ=${TZ}   # if you do not have a global TZ environment variable, use your TZ identifier (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. TZ="Europe/Berlin"
+        - TZ=${TZ:-Europe/Vienna}   # a global TZ environment variable overrides the default (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
       volumes:
         - ./conf/settings.ini:/app/settings.ini:ro
       restart: always

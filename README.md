@@ -106,7 +106,7 @@ else
 
 TZ variable:
 
-The TZ vairable defines the time zone. I have defined the variable in the file /etc/default/locale (reboot may be necessary afterwards)
+The TZ variable defines the time zone of the log timestamps. docker-compose.yml defaults to Europe/Vienna; a global TZ environment variable overrides it, e.g. in /etc/default/locale (reboot may be necessary afterwards):
 
 ```
 # cat /etc/default/locale
@@ -114,9 +114,3 @@ LANG="en_US.UTF-8"
 LANGUAGE="en_US:en"
 TZ="Europe/Berlin"
 ```
-
-Alternatively, you can replace TZ=${TZ} with TZ="Europe/Berlin" in the docker-compose.yml. 
-
-If the TZ variable is not defined, the following error message appears when starting getmail:
-"WARNING: The TZ variable is not set. Defaulting to a blank string."
-
