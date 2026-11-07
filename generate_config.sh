@@ -2,7 +2,8 @@
 
 set -o pipefail
 
-MAILCOW_CONFIG_FILE=/opt/mailcow-dockerized/mailcow.conf
+MAILCOW_PATH=/opt/mailcow-dockerized
+MAILCOW_CONFIG_FILE="$MAILCOW_PATH/mailcow.conf"
 OUTPUT_FILE=./conf/settings.ini
 
 [ ! -f $MAILCOW_CONFIG_FILE ] && echo "Mailcow config not found. " && exit 1
@@ -20,17 +21,17 @@ echo "lmtp_port:         25" >> "$OUTPUT_FILE"
 echo "lmtp_debug:        False" >> "$OUTPUT_FILE"
 echo "" >> "$OUTPUT_FILE"
 
-docker compose --project-directory ../mailcow-dockerized exec mysql-mailcow mysql -u "$DBUSER" -p"$DBPASS" "$DBNAME" -B -N -e "
+docker compose --project-directory "$MAILCOW_PATH" exec mysql-mailcow mysql -u "$DBUSER" -p"$DBPASS" "$DBNAME" -B -N -e "
 SELECT CONCAT_WS(CHAR(10),
-  CONCAT('[JOB_' ,user2 ,'_' ,id ,']'),
-  CONCAT('imap_hostname: ', host1), 
-  CONCAT('imap_port: ', port1), 
-  CONCAT('imap_ssl: ', IF(port1 = 993, 'True', 'False')), 
+  CONCAT('[JOB_' ,i.user2 ,'_' ,i.id ,']'),
+  CONCAT('imap_hostname: ', s.host1), 
+  CONCAT('imap_port: ', s.port1), 
+  CONCAT('imap_ssl: ', IF(s.port1 = 993, 'True', 'False')), 
   CONCAT('imap_username: ', user1), 
   CONCAT('imap_password: ', password1), 
   CONCAT('lmtp_recipient: ', user2), 
   ''
 )
-FROM imapsync
-WHERE active = 0;
+FROM imapsync i JOIN imapsync_source s ON s.id = i.source_id
+WHERE i.active = 0;
 " | sed 's/\\n/\n/g' >> "$OUTPUT_FILE"
