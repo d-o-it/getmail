@@ -8,8 +8,8 @@ imap_move_enable:  False
 imap_move_folder:  getmail
 imap_sync_folder:  INBOX
 imap_ssl:          True
-lmtp_hostname:     dovecot-mailcow
-lmtp_port:         24
+lmtp_hostname:     postfix-mailcow
+lmtp_port:         25
 lmtp_debug:        False
 lmtp_recipient:    CHANGE-ME@YOUR-MAILCOW-MAILBOX-ADDRESS.EXAMPLE
 

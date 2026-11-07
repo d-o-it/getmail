@@ -3,7 +3,7 @@
 Getmail is a small Python script to retrieve emails from IMAP accounts (e.g. gmx.de, gmail.com) and deliver these emails to the Mailcow/Dovecot mailbox. 
 I wrote to Getmail because I couldn't find any other solution with IMAP-IDLE in 2018 https://github.com/mailcow/mailcow-dockerized/issues/1554. 
 Emails are retrieved using IMAP IDLE, so emails are retrieved immediately and not after a fixed interval (as with imapsync from Mailcow).
-The transfer to Mailcow is done via [LMTP interface (simplified SNMP) from Dovecot]([https://link-url-here.org](https://doc.dovecot.org/configuration_manual/howto/postfix_dovecot_lmtp/)), so you can also use the [sieve rules from Dovecoat](https://doc.dovecot.org/configuration_manual/sieve/examples/) (imapsync from Mailcow only allows a fixed folder). The goal of Getmail is to empty the entire INBOX. If the source IMAP account contains emails, you should copy/move them to another folder for testing (e.g. with an email programm or webmail).
+The transfer to Mailcow is done via SMTP to Postfix (`postfix-mailcow:25`), so retrieved emails pass rspamd's spam filter like any other incoming mail, and the [sieve rules from Dovecot](https://doc.dovecot.org/configuration_manual/sieve/examples/) still apply (imapsync from Mailcow only allows a fixed folder). The settings keep their `lmtp_` names. The goal of Getmail is to empty the entire INBOX. If the source IMAP account contains emails, you should copy/move them to another folder for testing (e.g. with an email programm or webmail).
 
 Install:
 -  Clone getmail

@@ -204,7 +204,7 @@ class Getmail(threading.Thread):
         try: 
          
           try:
-            lmtp = smtplib.LMTP(self.lmtp_hostname, self.lmtp_port)
+            lmtp = smtplib.SMTP(self.lmtp_hostname, self.lmtp_port)
           except ConnectionRefusedError as e:
             logging.error("LMTP deliver (ConnectionRefusedError): %s" % (e))
             return False

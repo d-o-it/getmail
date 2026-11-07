@@ -5,7 +5,7 @@ services:
       image: cb/getmail:latest
       #  build: ./Dockerfiles/     # for local build
       build:
-        context: https://github.com/christianbur/getmail.git#master
+        context: .
         dockerfile: Dockerfiles/Dockerfile
       environment:
         - TZ=${TZ}   # if you do not have a global TZ environment variable, use your TZ identifier (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones), e.g. TZ="Europe/Berlin"
