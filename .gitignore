@@ -1,6 +1,7 @@
 # Written by generate_config.sh, contains the IMAP passwords
 conf/settings.ini
 conf/settings.ini.bck
+conf/settings.ini.tmp
 # Binlog position of watch_changes.sh
 binlog.pos
 # Host-specific overrides

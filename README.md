@@ -26,7 +26,18 @@ Install:
    cd /opt/getmail
    ./generate_config.sh
   ```
-- Optional: keep the config in sync. watch_changes.sh follows MariaDB's binlog, reruns generate_config.sh whenever a row of the imapsync table is updated (it does not react to INSERT/DELETE, so run generate_config.sh by hand after adding or removing a job) and restarts getmail (with a notification mail) when the config changed.
+- Optional: keep the config in sync. watch_changes.sh follows MariaDB's binlog, reruns generate_config.sh after every transaction that adds, changes or deletes a sync job or a sync source (tables imapsync, imapsync_source) and restarts getmail (with a notification mail) when the config changed. If generate_config.sh fails or finds no job, the old config stays in place.
+  Mailcow's MariaDB needs the binlog in row format. MariaDB only purges expired binlogs when it starts a new file, so keep the files small; the watcher only needs the last few minutes and regenerates the config once if its position was purged. Add to /opt/mailcow-dockerized/data/conf/mysql/extra.cnf (not tracked by Mailcow, survives updates) and restart mysql-mailcow:
+  ```
+  [mysqld]
+  server-id=1
+  log-bin=mysql-bin
+  binlog_format=ROW
+  binlog_row_image=MINIMAL
+  binlog_expire_logs_seconds=3600
+  max_binlog_size=16M
+  ```
+  Then install the service:
   ```
    cp /opt/getmail/getmail-changes-watcher.service /etc/systemd/system/
    systemctl daemon-reload
